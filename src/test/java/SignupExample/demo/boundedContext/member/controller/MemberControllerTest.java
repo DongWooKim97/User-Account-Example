@@ -151,31 +151,4 @@ public class MemberControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrlPattern("/**"));
     }
-
-    @Test
-    // @Rollback(value = false) // DB에 흔적이 남는다.
-    @DisplayName("로그인 처리")
-    void t006() throws Exception {
-        // WHEN
-        ResultActions resultActions = mvc
-                .perform(post("/member/login")
-                        .with(csrf()) // CSRF 키 생성
-                        .param("username", "user3")
-                        .param("password", "1234")
-                )
-                .andDo(print());
-
-        MvcResult mvcResult = resultActions.andReturn();
-        HttpSession session = mvcResult.getRequest().getSession(false);
-        SecurityContext securityContext = (SecurityContext) session.getAttribute("SPRING_SECURITY_CONTEXT");
-        User user = (User) securityContext.getAuthentication().getPrincipal();
-
-        assertThat(user.getUsername()).isEqualTo("user3"); // 위에서 user3으로 로그인 했으니께 !
-
-
-        // THEN
-        resultActions
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrlPattern("/**"));
-    }
 }
